@@ -43,26 +43,52 @@ document.addEventListener("DOMContentLoaded", function(event) {
   canvas.width  = window.innerWidth  * $zoom;
   canvas.style.width  = canvas.width  / $zoom;
   canvas.style.height = canvas.height / $zoom;
+
+  const fps = 60;
+  const tpf = canvas.width;
   
   entropy = new Entropy();
 
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
 
-  x     = 0;
-  y     = Math.floor(canvas.height / 2);
+  t = 0;
+  x = 0;
+  y = Math.floor(canvas.height / 2);
+  h = 0;
 
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
-  setInterval(function() {
-    x %= canvas.width;
-    if (entropy.shift()) {
-      y++;
-    } else {
-      y--;
+
+  var play = function(t = 0) {
+    if (t < tpf) {
+      t++;
+      h += 1 / canvas.width;
+
+      x++;
+      if (entropy.shift()) {
+        y++;
+      } else {
+        y--;
+      }
+      x %= canvas.width;
+      if (y < 0) {
+        y = Math.abs(y);
+      }
+      if (y > canvas.height) {
+        y -= (y - canvas.height);
+      }
+      h %= 360;
+
+      context.fillStyle = "hsl("+h+", 100%, 50%)";
+      context.fillRect(x, y, 1, 1);
+      context.fillStyle = "black";
+      context.fillRect(x, y + 1, 1, canvas.height - y);
+      play(t);
     }
-    context.fillStyle = "white";
-    context.fillRect(x, y, 1, 1);
-    x++;
-  }, 1);
+  };
+
+  setInterval(function() {
+    play();
+  }, 1000 / fps);
 });
