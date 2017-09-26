@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   canvas.style.height = canvas.height / $zoom;
 
   const fps = 60;
-  const tpf = canvas.width;
+  const tpf = 30;
   
   entropy = new Entropy();
 
@@ -55,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   t = 0;
   x = 0;
   y = Math.floor(canvas.height / 2);
-  h = 0;
 
   context.fillStyle = "black";
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -63,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var play = function(t = 0) {
     if (t < tpf) {
       t++;
-      h += 1 / canvas.width;
 
       x++;
       if (entropy.shift()) {
@@ -78,11 +76,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
       if (y > canvas.height) {
         y -= (y - canvas.height);
       }
-      h %= 360;
 
-      context.fillStyle = "hsl("+h+", 100%, 50%)";
+      context.fillStyle = "#fff";
       context.fillRect(x, y, 1, 1);
-      context.fillStyle = "black";
+      context.fillStyle = "#000";
       context.fillRect(x, y + 1, 1, canvas.height - y);
       play(t);
     }
